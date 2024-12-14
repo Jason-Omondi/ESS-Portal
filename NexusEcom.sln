@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexusEcom", "NexusEcom\NexusEcom.csproj", "{42A9AC31-3317-497F-A1BB-21132BDA8ED0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexusEcom.AppHost", "NexusEcom.AppHost\NexusEcom.AppHost.csproj", "{9D4B6506-4115-4199-A6E2-3C3314493B6F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexusEcom.ServiceDefaults", "NexusEcom.ServiceDefaults\NexusEcom.ServiceDefaults.csproj", "{C1BDA9C0-BA95-4F37-9C78-04A954875285}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexusEcom.Controllers", "NexusEcom.Controllers\NexusEcom.Controllers.csproj", "{974A5FC5-6F9B-420D-8179-8E4D2C5687E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexusEcom.DataAccess", "NexusEcom.Data\NexusEcom.DataAccess.csproj", "{22B86109-06ED-458E-B015-6A27AC137F13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexusEcom.Utils", "NexusEcom.Utils\NexusEcom.Utils.csproj", "{32646336-95B3-4344-B4E2-89A046535416}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{42A9AC31-3317-497F-A1BB-21132BDA8ED0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42A9AC31-3317-497F-A1BB-21132BDA8ED0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42A9AC31-3317-497F-A1BB-21132BDA8ED0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42A9AC31-3317-497F-A1BB-21132BDA8ED0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D4B6506-4115-4199-A6E2-3C3314493B6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D4B6506-4115-4199-A6E2-3C3314493B6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D4B6506-4115-4199-A6E2-3C3314493B6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D4B6506-4115-4199-A6E2-3C3314493B6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1BDA9C0-BA95-4F37-9C78-04A954875285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1BDA9C0-BA95-4F37-9C78-04A954875285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1BDA9C0-BA95-4F37-9C78-04A954875285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1BDA9C0-BA95-4F37-9C78-04A954875285}.Release|Any CPU.Build.0 = Release|Any CPU
+		{974A5FC5-6F9B-420D-8179-8E4D2C5687E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{974A5FC5-6F9B-420D-8179-8E4D2C5687E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{974A5FC5-6F9B-420D-8179-8E4D2C5687E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{974A5FC5-6F9B-420D-8179-8E4D2C5687E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22B86109-06ED-458E-B015-6A27AC137F13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22B86109-06ED-458E-B015-6A27AC137F13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22B86109-06ED-458E-B015-6A27AC137F13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22B86109-06ED-458E-B015-6A27AC137F13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32646336-95B3-4344-B4E2-89A046535416}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32646336-95B3-4344-B4E2-89A046535416}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32646336-95B3-4344-B4E2-89A046535416}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32646336-95B3-4344-B4E2-89A046535416}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0CE64327-8020-49B7-AF14-78B364F7CBFA}
+	EndGlobalSection
+EndGlobal

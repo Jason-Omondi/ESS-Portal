@@ -1,0 +1,67 @@
+﻿@page "/login"
+
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@inject Solutaris.InfoWARE.ProtectedBrowserStorage.Services.IIWLocalStorageService localStorage
+
+<EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <InputText id="email" class="form-control" @bind-Value="loginModel.Email" />
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password</label>
+        <InputText id="password" class="form-control" @bind-Value="loginModel.Password" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Login</button>
+</EditForm>
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger mt-3">
+        @errorMessage
+    </div>
+}
+
+@code {
+    private LoginDto loginModel = new LoginDto();
+    private string? errorMessage;
+
+    private async Task HandleLogin()
+    {
+        errorMessage = null;
+        try
+        {
+            var response = await HttpClient.PostAsJsonAsync("eco/auth/Login", loginModel);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<DefaultConfigs.DefaultResponse>();
+                if ( result.status == DefaultConfigs.STATUS_SUCCESS)
+                {
+                    var token = result.return_value.ToString();
+                    // Store the token (e.g., in local storage or session)
+                    await localStorage.SetItemAsync("authToken", token);
+                    NavigationManager.NavigateTo("/Dashboard"); // Redirect to a different page
+                }
+                else
+                {
+                    errorMessage = result.message ?? "Login failed";
+                }
+            }
+            else
+            {
+                errorMessage = "An error occurred during login.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Failed to connect to the server: " + ex.Message;
+        }
+    }
+}
+

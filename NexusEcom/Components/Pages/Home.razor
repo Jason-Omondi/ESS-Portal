@@ -1,0 +1,45 @@
+﻿@page "/"
+
+@inject AuthService AuthService
+@inject Solutaris.InfoWARE.ProtectedBrowserStorage.Services.IIWLocalStorageService localStorage
+
+@if (IsInitialized)
+{
+    if (IsLoggedIn)
+    {
+        <Dashboard />
+    }
+    else
+    {
+        <Login OnLoginSuccess="HandleLoginSuccess" />
+    }
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    private bool IsInitialized { get; set; } = false;
+    private bool IsLoggedIn { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Check if the user is logged in after rendering is complete
+            IsLoggedIn = await AuthService.IsUserLoggedIn();
+            IsInitialized = true;
+
+            // Refresh the UI
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleLoginSuccess(string token)
+    {
+        await localStorage.SetItemAsync("authToken", token);
+        IsLoggedIn = true;
+        StateHasChanged();
+    }
+}
