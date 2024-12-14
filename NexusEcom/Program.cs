@@ -1,4 +1,3 @@
-using NexusEcom.Components;
 using NexusEcom.Controllers.Services;
 using NexusEcom.Utils;
 using NexusEcom.DataAccess.Repositories;
@@ -12,23 +11,20 @@ using System.Text;
 using NexusEcom.DataAccess.Mappings;
 using NexusEcom.Controllers.Services.Interfaces;
 using NexusEcom.DataAccess.Repositories.Interfaces;
+using NexusEcom.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
 builder.Services.AddHealthChecks();
 builder.Services.AddScoped<IIWLocalStorageService, LocalStorageUtil>();
 
 builder.Services.AddRazorComponents();
 
-// Registering Entity Framework InMemory Database (for dev/testing purposes)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseInMemoryDatabase("EcommerceDataBase"));
 
-// Default configuration
 DefaultConfigs.Initialize(builder.Configuration);
 
-// Register the services
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ILeaveRepository, LeaveRepository>();
@@ -37,7 +33,6 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddControllers();
 
-// Add Swagger services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -62,12 +57,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
-// Configure middleware
 app.MapHealthChecks("/health");
 app.MapDefaultEndpoints();
 app.MapControllers();
 
-// Add Authentication Services
 
 builder.Services.AddAuthorization();
 
@@ -78,7 +71,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NexusEcom API v1"));
 }
 
-// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
