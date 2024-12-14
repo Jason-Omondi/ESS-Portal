@@ -161,21 +161,36 @@ namespace NexusEcom.DataAccess.Repositories
             }
         }
 
-        public async Task<List<User>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<List<UserDto>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10)
         {
             try
             {
-                return await appDbContext.Users
+                var list = await appDbContext.Users
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
+
+                // Map each User entity to a UserDto
+                var userDtos = list.Select(user => new UserDto
+                {
+                    Email = user.Email,
+                    EmployeeNumber = user.EmployeeNumber,
+                    Role = user.Role,
+                    UserId = user.UserId,
+                    FullName = user.FullName,
+                    PhoneNumber = user.PhoneNumber,
+                    //CreatedAt = user.CreatedAt
+                }).ToList();
+
+                return userDtos;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error retrieving users: {ex.Message}");
-                return new List<User>();
+                return new List<UserDto>();
             }
         }
+
         public async Task<List<User>> GetAllUsersAsync()
         {
             try

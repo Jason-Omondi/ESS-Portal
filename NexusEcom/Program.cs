@@ -25,8 +25,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 DefaultConfigs.Initialize(builder.Configuration);
 
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<AuthService>();
+
+builder.Services.AddScoped<UserService>();
+
+builder.Services.AddScoped<IUserRepository ,UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILeaveRepository, LeaveRepository>();
 builder.Services.AddScoped<ILeaveService, LeaveService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));

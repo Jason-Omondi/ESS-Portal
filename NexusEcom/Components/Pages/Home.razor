@@ -1,6 +1,6 @@
 ﻿@page "/"
 
-@inject AuthService AuthService
+@inject UserService AuthService
 @inject Solutaris.InfoWARE.ProtectedBrowserStorage.Services.IIWLocalStorageService localStorage
 
 @if (IsInitialized)
@@ -28,7 +28,7 @@ else
         if (firstRender)
         {
             // Check if the user is logged in after rendering is complete
-            IsLoggedIn = await AuthService.IsUserLoggedIn();
+            //IsLoggedIn = await AuthService.IsUserLoggedIn();
             IsInitialized = true;
 
             // Refresh the UI
