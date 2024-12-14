@@ -91,7 +91,7 @@ namespace NexusEcom.Controllers.Endpoints
         [HttpPost]
         [AllowAnonymous]
         [Route("Register")]
-        public async Task<IActionResult> Register(RegisterDto request)
+        public async Task<IActionResult> Register(UserDto request)
         {
             try
             {

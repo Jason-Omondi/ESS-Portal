@@ -20,16 +20,17 @@ namespace NexusEcom.DataAccess.Context
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<User>().HasData(
-               new User
-               {
-                   userId = 1,
-                   Email = "admin@admin.com",
-                   PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
-                   Role = "admin",
-                   CreatedAt = DateTime.Now,
-               }
-               );
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(u => u.UserId);
+                entity.Property(u => u.Email).IsRequired().HasMaxLength(255);
+                entity.Property(u => u.EmployeeNumber).IsRequired().HasMaxLength(50);
+                entity.Property(u => u.FullName).IsRequired().HasMaxLength(100);
+                entity.Property(u => u.PasswordHash).IsRequired();
+                entity.Property(u => u.Role).IsRequired().HasMaxLength(50);
+                entity.Property(u => u.CreatedAt).IsRequired();
+                entity.Property(u => u.LastLogin).IsRequired(false);
+            });
 
             modelBuilder.Entity<LeaveBalance>(entity =>
             {
@@ -42,7 +43,6 @@ namespace NexusEcom.DataAccess.Context
                 entity.Property(lb => lb.CarriedForwardDays).IsRequired();
             });
 
-            // Leave Entity Configuration
             modelBuilder.Entity<Leave>(entity =>
             {
                 entity.HasKey(l => l.LeaveId);
@@ -52,11 +52,10 @@ namespace NexusEcom.DataAccess.Context
                 entity.Property(l => l.EndDate).IsRequired();
                 entity.Property(l => l.Status).HasMaxLength(50).IsRequired();
 
-                // Define relationship with LeaveBalance using composite keys
                 entity.HasOne(l => l.LeaveBalance)
           .WithMany(lb => lb.Leaves)
           .HasForeignKey(l => l.leaveBalanceId)
-          .OnDelete(DeleteBehavior.Restrict); // Prevent cascading deletes
+          .OnDelete(DeleteBehavior.Restrict); // Prevents cascading deletes
             });
         }
     }

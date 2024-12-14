@@ -15,6 +15,7 @@ namespace NexusEcom.DataAccess.Mappings
 
             CreateMap<CreateLeaveDto, Leave>();
             CreateMap<LeaveBalance, LeaveBalanceDto>().ReverseMap();
+            CreateMap<User, UserDto>().ReverseMap();
         }
     }
 }

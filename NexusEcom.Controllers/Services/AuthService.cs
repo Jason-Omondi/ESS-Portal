@@ -55,7 +55,7 @@ namespace NexusEcom.Controllers.Services
 
 
        
-        public async Task<bool> Register(RegisterDto register)
+        public async Task<bool> Register(UserDto register)
         {
             try
             {
