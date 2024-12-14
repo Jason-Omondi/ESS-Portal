@@ -33,26 +33,23 @@ namespace NexusEcom.Controllers.Services
                     throw new ArgumentException("Password is required.");
                 }
 
-                // Check if user exists
                 var user = await _userRepository.GetByEmailAsync(loginDto.Email);
                 if (user == null)
                 {
                     throw new InvalidOperationException("Invalid email or password.");
                 }
 
-                // Verify password
                 if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
                 {
                     throw new InvalidOperationException("Invalid email or password.");
                 }
 
-                // Generate JWT token upon successful login
                 return DefaultConfigs.GenerateToken(user.Email, user.Role.ToLower());
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error during login: {ex.Message}");
-                throw; // Propagate the exception for handling in the controller
+                throw; // Propagate the exception 
             }
         }
 
@@ -117,25 +114,3 @@ namespace NexusEcom.Controllers.Services
 }
 
 
-
-//public async Task<string?> LoginAnync(LoginDto loginDto)
-//{
-//    try
-//    {
-//        var user = await _userRepository.GetByEmailAsync(loginDto.Email);
-//        if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
-//        {
-//            return null; //failed
-//        }
-//        else
-//        {
-//            return DefaultConfigs.GenerateToken(user.Email, user.Role.ToLower());
-//        }
-
-//    }
-//    catch (Exception ex)
-//    {
-//        Console.WriteLine(ex);
-//        return null;
-//    }
-//}

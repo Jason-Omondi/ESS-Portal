@@ -173,7 +173,6 @@ namespace NexusEcom.Controllers.Endpoints
             }
         }
 
-        // Endpoint for getting all leave requests
         [HttpGet("all", Name = "GetAllLeaveRequests")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllLeaveRequests()

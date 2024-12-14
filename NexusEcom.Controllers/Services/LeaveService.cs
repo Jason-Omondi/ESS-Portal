@@ -144,21 +144,17 @@ namespace NexusEcom.Controllers.Services
         {
             try
             {
-                // Validate date range
                 if (startDate > endDate)
                     throw new ArgumentException("Start date must be before or equal to end date.");
 
-                // Retrieve leaves by criteria
                 var leaves = await _leaveRepository.GetLeavesByCriteriaAsync(startDate, endDate, employeeId, leaveTypeId);
 
-                // Handle empty result
                 if (leaves == null || leaves.Count == 0)
                 {
                     _logger.LogInformation("No leave requests found matching the specified criteria");
                     return new List<LeaveResponseDto>();
                 }
 
-                // Map and return
                 return _mapper.Map<List<LeaveResponseDto>>(leaves);
             }
             catch (Exception ex)
@@ -167,14 +163,12 @@ namespace NexusEcom.Controllers.Services
                 throw;
             }
         }
-
-        // Additional validation method (example)
         private void ValidateLeaveRequest(CreateLeaveDto leaveDto)
         {
             if (leaveDto.StartDate > leaveDto.EndDate)
                 throw new ArgumentException("Leave start date must be before or equal to end date.");
 
-            // Add more business logic validations as needed
+            //other validations...
         }
     }
 }
