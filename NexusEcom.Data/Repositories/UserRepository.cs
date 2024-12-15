@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NexusEcom.DataAccess.Context;
-using NexusEcom.DataAccess.DataTransferObjects;
-using NexusEcom.DataAccess.Entities;
-using NexusEcom.DataAccess.Repositories.Interfaces;
+﻿
+using Microsoft.EntityFrameworkCore;
+using NexusEcom.Data.Context;
+using NexusEcom.Data.DataTransferObjects;
+using NexusEcom.Data.Entities;
+using NexusEcom.Data.Repositories.Interfaces;
 using System.Security.Cryptography.X509Certificates;
 
-
-namespace NexusEcom.DataAccess.Repositories
+namespace NexusEcom.Data.Repositories
 {
     public class UserRepository : IUserRepository
     {
@@ -31,8 +31,21 @@ namespace NexusEcom.DataAccess.Repositories
             }
         }
 
+        public async Task<User?> GetByEmpNoAsync(string empNo)
+        {
+            try
+            {
+                return await appDbContext.Users.FirstOrDefaultAsync(u => u.EmployeeNumber == empNo);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retreiving user: {ex.Message}");
+                return null;
+            }
+        }
 
-       
+
+
         public async Task<bool> AddUserAsync(User user)
         {
             try
@@ -198,7 +211,16 @@ namespace NexusEcom.DataAccess.Repositories
         {
             try
             {
-                var user = await GetByEmailAsync(email);
+
+                var data = await appDbContext.Users.FirstOrDefaultAsync(u => u.EmployeeNumber == email);
+                if (data == null)
+                {
+                    return false; // User not found
+                }
+
+
+                //extract current user by email
+                var user = await GetByEmailAsync(data.Email);
                 if (user == null)
                 {
                     return false; // User not found
@@ -261,6 +283,14 @@ namespace NexusEcom.DataAccess.Repositories
                     Console.WriteLine($"User is not part of us!");
                     return false;
                 }
+
+                //check if the existing user has a password, if so then user is already registered, if not then we can set password
+                if(!string.IsNullOrWhiteSpace(existingUser.PasswordHash))
+                {
+                    Console.WriteLine($"User {employeeNo} is already registered!");
+                    return false;
+                }
+
 
                 existingUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
 

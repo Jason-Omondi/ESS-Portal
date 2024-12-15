@@ -1,6 +1,5 @@
 ﻿
-
-namespace NexusEcom.DataAccess.DataTransferObjects
+namespace NexusEcom.Data.DataTransferObjects
 {
     public class LeaveBalanceDto
     {

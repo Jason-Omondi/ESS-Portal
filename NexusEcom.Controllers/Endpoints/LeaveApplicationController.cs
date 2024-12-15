@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NexusEcom.Controllers.Services.Interfaces;
-using NexusEcom.DataAccess.DataTransferObjects;
+using NexusEcom.Data.DataTransferObjects;
 using NexusEcom.Utils;
 
 

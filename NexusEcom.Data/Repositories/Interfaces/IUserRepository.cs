@@ -1,18 +1,16 @@
-﻿using NexusEcom.DataAccess.DataTransferObjects;
-using NexusEcom.DataAccess.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
-namespace NexusEcom.DataAccess.Repositories.Interfaces
+using NexusEcom.Data.DataTransferObjects;
+using NexusEcom.Data.Entities;
+
+namespace NexusEcom.Data.Repositories.Interfaces
 {
     public interface IUserRepository
     {
         //Task<User?> GetByIdAsync(int userId);
         Task<User?> GetByEmailAsync(string email);
         Task<List<User>> GetAllUsersAsync();
+        Task<User?> GetByEmpNoAsync(string employeeNo);
         Task<List<UserDto>> GetAllUsersAsync(int pageNumber, int pageSize);
         //Task<List<User>> GetAllUsersWithFiltersAsync(string? role = null, string? emailContains = null);
 

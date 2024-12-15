@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using NexusEcom.Controllers.Services.Interfaces;
-using NexusEcom.DataAccess.DataTransferObjects;
-using NexusEcom.DataAccess.Entities;
+using NexusEcom.Data.DataTransferObjects;
+using NexusEcom.Data.Entities;
 using NexusEcom.DataAccess.Repositories.Interfaces;
 
 namespace NexusEcom.Controllers.Services

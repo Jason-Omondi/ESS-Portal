@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NexusEcom.Controllers.Services;
 using NexusEcom.Controllers.Services.Interfaces;
-using NexusEcom.DataAccess.DataTransferObjects;
+using NexusEcom.Data.DataTransferObjects;
 using NexusEcom.Utils;
 
 namespace NexusEcom.Controllers.Endpoints
@@ -24,11 +24,12 @@ namespace NexusEcom.Controllers.Endpoints
         [HttpPost]
         [Route("Login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<IActionResult> Login(string employeeNo, string password)
         {
+            //var email = employeeNo;
             try
             {
-                if (email == null )
+                if (employeeNo == null )
                 {
                     Console.WriteLine($"bad request");
                     return BadRequest(new DefaultConfigs.DefaultResponse(
@@ -40,9 +41,9 @@ namespace NexusEcom.Controllers.Endpoints
                         ));
                 }
 
-                if (!await _authService.ValidateUserLoginAsync(email, password))
+                if (!await _authService.ValidateUserLoginAsync(employeeNo, password))
                 {
-                    Console.WriteLine($"Failed to validate login user: {email}");
+                    Console.WriteLine($"Failed to validate login user: {employeeNo}");
                     return BadRequest(new DefaultConfigs.DefaultResponse(
                         DefaultConfigs.STATUS_FAIL,
                         DefaultConfigs.ERROR_MESSAGE,
@@ -51,14 +52,15 @@ namespace NexusEcom.Controllers.Endpoints
                         false
                         ));
                 }
-                var data = _authService.GetUserByEmail(email);
-                var token = DefaultConfigs.GenerateToken(email, password);
+                //var data = _authService.GetUserByEmail(email);
+                var data = _authService.GetByEmpNoAsync(employeeNo);
+                var token = DefaultConfigs.GenerateToken(employeeNo, password);
                 return Ok(
                     new DefaultConfigs.DefaultResponse(
                         DefaultConfigs.STATUS_SUCCESS,
                         "Request processed successfully",
                         token,
-                        data,
+                        data.Result!,
                         true
                         )
                     );
@@ -67,7 +69,7 @@ namespace NexusEcom.Controllers.Endpoints
             }
             catch (Exception ex) 
             { 
-                Console.WriteLine($"Failed to login user {email}", ex.ToString());
+                Console.WriteLine($"Failed to login user {employeeNo}", ex.ToString());
                 return BadRequest(new DefaultConfigs.DefaultResponse(
                     DefaultConfigs.STATUS_FAIL,
                     DefaultConfigs.ERROR_MESSAGE,
@@ -84,11 +86,11 @@ namespace NexusEcom.Controllers.Endpoints
         {
             try
             {
-                if (request == null)
+                if (string.IsNullOrWhiteSpace(request.EmployeeNumber) || string.IsNullOrWhiteSpace(request.Password))
                 {
                     return BadRequest(new DefaultConfigs.DefaultResponse(
                         DefaultConfigs.STATUS_ERROR,
-                        "Invalid request! Missing a payload?",
+                        "Invalid request! Missing a payload item?",
                         null,
                         null,
                         false
@@ -102,7 +104,7 @@ namespace NexusEcom.Controllers.Endpoints
                     return StatusCode(500, new DefaultConfigs.DefaultResponse(
                         DefaultConfigs.STATUS_FAIL,
                         DefaultConfigs.ERROR_MESSAGE,
-                        null,
+                        $"User does not exist or is already registered! {request.EmployeeNumber}",
                         null,
                         false
                     ));
@@ -130,12 +132,13 @@ namespace NexusEcom.Controllers.Endpoints
 
 
         [HttpGet("GetAllUsers")]
+        [AllowAnonymous]
         //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers(int pageNumber = 1, int pageSize = 10)
         {
             try
             {
-                var users = await _userService.GetAllUsersAsync(pageNumber, pageSize);
+                var users = await _userService.GetAllUsersAsync();
 
                 if (users == null || !users.Any())
                 {

@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NexusEcom.Data\NexusEcom.DataAccess.csproj" />
+    <ProjectReference Include="..\NexusEcom.Data\NexusEcom.Data.csproj" />
     <ProjectReference Include="..\NexusEcom.Utils\NexusEcom.Utils.csproj" />
   </ItemGroup>
 

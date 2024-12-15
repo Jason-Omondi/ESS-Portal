@@ -1,9 +1,5 @@
-﻿using NexusEcom.DataAccess.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using NexusEcom.Data.Entities;
 
 namespace NexusEcom.DataAccess.Repositories.Interfaces
 {

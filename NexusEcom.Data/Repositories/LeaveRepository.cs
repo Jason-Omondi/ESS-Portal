@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NexusEcom.DataAccess.Context;
-using NexusEcom.DataAccess.Entities;
+﻿
+using Microsoft.EntityFrameworkCore;
+using NexusEcom.Data.Context;
+using NexusEcom.Data.Entities;
 using NexusEcom.DataAccess.Repositories.Interfaces;
 
-
-namespace NexusEcom.DataAccess.Repositories
+namespace NexusEcom.Data.Repositories
 {
     public class LeaveRepository : ILeaveRepository
     {

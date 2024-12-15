@@ -1,12 +1,7 @@
 ﻿using NexusEcom.Controllers.Services.Interfaces;
-using NexusEcom.DataAccess.DataTransferObjects;
-using NexusEcom.DataAccess.Entities;
-using NexusEcom.DataAccess.Repositories;
-using NexusEcom.DataAccess.Repositories.Interfaces;
-using NexusEcom.Utils;
-//using Solutaris.InfoWARE.ProtectedBrowserStorage.Extensions;
-using Solutaris.InfoWARE.ProtectedBrowserStorage.Services;
-using System.Text.RegularExpressions;
+using NexusEcom.Data.DataTransferObjects;
+using NexusEcom.Data.Entities;
+using NexusEcom.Data.Repositories.Interfaces;
 
 namespace NexusEcom.Controllers.Services
 {
@@ -32,25 +27,37 @@ namespace NexusEcom.Controllers.Services
             }
         }
 
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            try
+            {
+                return await _userRepository.GetAllUsersAsync();
+            }
+            catch (Exception ex) 
+            {
+                return new List<User>();
+            }
+        
+        }
+
         public async Task<List<UserDto>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10)
         {
             try
             {
                 return await _userRepository.GetAllUsersAsync(pageNumber, pageSize);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return new List<UserDto>();
             }
-        
-        }
 
+        }
 
         public async Task<bool> RegisterUserAsync(UserDto userDto)
         {
             try
             {
-                return await _userRepository.RegisterUserAsync(userDto);
+                return await _userRepository.RegisterUserIfUserExists(userDto.EmployeeNumber, userDto.Password);
                
             }
             catch (Exception ex) 
@@ -108,6 +115,18 @@ namespace NexusEcom.Controllers.Services
             catch (Exception ex) 
             {
                 Console.WriteLine($"User not found: {ex}");
+                return null;
+            }
+        }
+
+        public async Task<User?> GetByEmpNoAsync(string empNo)
+        {
+            try
+            {
+                return await _userRepository.GetByEmpNoAsync(empNo);
+            }
+            catch (Exception ex)
+            {
                 return null;
             }
         }

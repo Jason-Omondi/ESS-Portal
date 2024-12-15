@@ -1,20 +1,22 @@
 using NexusEcom.Controllers.Services;
 using NexusEcom.Utils;
-using NexusEcom.DataAccess.Repositories;
-using NexusEcom.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Solutaris.InfoWARE.ProtectedBrowserStorage.Services;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using NexusEcom.DataAccess.Mappings;
 using NexusEcom.Controllers.Services.Interfaces;
-using NexusEcom.DataAccess.Repositories.Interfaces;
 using NexusEcom.Components;
+using NexusEcom.Data.Context;
+using NexusEcom.Data.Repositories;
+using NexusEcom.Data.Repositories.Interfaces;
+using NexusEcom.Data.Mappings;
+using NexusEcom.DataAccess.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services
 builder.Services.AddHealthChecks();
 builder.Services.AddScoped<IIWLocalStorageService, LocalStorageUtil>();
 
@@ -25,10 +27,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 DefaultConfigs.Initialize(builder.Configuration);
 
-
 builder.Services.AddScoped<UserService>();
 
-builder.Services.AddScoped<IUserRepository ,UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILeaveRepository, LeaveRepository>();
 builder.Services.AddScoped<ILeaveService, LeaveService>();
@@ -57,24 +58,30 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// Ensure database creation and seed data
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.EnsureCreated(); 
+    var users = context.Users.ToList();
+    Console.WriteLine($"Seeded {users.Count} users."); // Log seeded user count
+}
+
+// Map application endpoints
 app.MapHealthChecks("/health");
 app.MapDefaultEndpoints();
 app.MapControllers();
-
-
-builder.Services.AddAuthorization();
-
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NexusEcom API v1"));
 }
-
-if (!app.Environment.IsDevelopment())
+else
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();

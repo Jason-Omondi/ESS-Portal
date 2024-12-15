@@ -1,9 +1,6 @@
-﻿using NexusEcom.DataAccess.DataTransferObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+
+using NexusEcom.Data.DataTransferObjects;
 
 namespace NexusEcom.Controllers.Services.Interfaces
 {

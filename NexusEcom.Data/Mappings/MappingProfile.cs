@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using NexusEcom.DataAccess.DataTransferObjects;
-using NexusEcom.DataAccess.Entities;
+using NexusEcom.Data.DataTransferObjects;
+using NexusEcom.Data.Entities;
 
-namespace NexusEcom.DataAccess.Mappings
+namespace NexusEcom.Data.Mappings
 {
     public class MappingProfile : Profile
     {

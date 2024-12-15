@@ -1,5 +1,6 @@
-﻿using NexusEcom.DataAccess.DataTransferObjects;
-using NexusEcom.DataAccess.Entities;
+﻿
+using NexusEcom.Data.DataTransferObjects;
+using NexusEcom.Data.Entities;
 
 namespace NexusEcom.Controllers.Services.Interfaces
 {
@@ -8,6 +9,7 @@ namespace NexusEcom.Controllers.Services.Interfaces
         Task<User?> GetUserByEmail(string email);
 
         //Task AddUserAsync(UserDto user);
+        Task<List<User>> GetAllUsersAsync();
 
         Task<bool> RegisterUserAsync(UserDto userDto);
         Task<bool> ValidateUserLoginAsync(string email, string password);
