@@ -19,7 +19,9 @@ namespace NexusEcom.DataAccess.Repositories.Interfaces
         Task<bool> UpdateUserAsync(UserDto updatedUser); // Update user details
 
         // Authentication Operations
-        Task<bool> RegisterUserAsync(UserDto registerDto); 
+        //Task<bool> RegisterUserAsync(UserDto registerDto); 
+
+        Task<bool> RegisterUserIfUserExists(string employeeNo, string password);
         Task<bool> ValidateUserPasswordAsync(string email, string password);
         Task<bool> ResetPasswordAsync(int userId, string newPassword); // Reset user password
 

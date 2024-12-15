@@ -26,11 +26,37 @@ namespace NexusEcom.DataAccess.Context
                 entity.Property(u => u.Email).IsRequired().HasMaxLength(255);
                 entity.Property(u => u.EmployeeNumber).IsRequired().HasMaxLength(50);
                 entity.Property(u => u.FullName).IsRequired().HasMaxLength(100);
-                entity.Property(u => u.PasswordHash).IsRequired();
+                entity.Property(u => u.PasswordHash).IsRequired(false);
+                entity.Property(u => u.PhoneNumber).IsRequired().HasMaxLength(100);
                 entity.Property(u => u.Role).IsRequired().HasMaxLength(50);
                 entity.Property(u => u.CreatedAt).IsRequired();
                 entity.Property(u => u.LastLogin).IsRequired(false);
             });
+
+            //seed simulation of 30 users ie role is employee
+            modelBuilder.Entity<User>().HasData(
+                new User { UserId = 1, Email = "john.mutemi@example.com", EmployeeNumber = "EMP001", FullName = "John Mtemi", Role = "Employee", CreatedAt = DateTime.Now, PhoneNumber = "257769711031" },
+                new User { UserId = 2, Email = "jane.awiyo@example.com", EmployeeNumber = "EMP002", FullName = "Jane Awiyo", Role = "Employee", CreatedAt = DateTime.Now, PhoneNumber = "2547769711032" },
+                new User { UserId = 3, Email = "admin@admin.com", EmployeeNumber = "EMP000", FullName = "System Admin", Role = "Admin", CreatedAt = DateTime.Now, PhoneNumber = "2547769711000" }
+            );
+
+            var names = new[] { "Alice", "Amondi", "Catherine", "David", "Kratos", "Tamre", "Grace", "Henry" };
+
+            for (int i = 4; i <= 30; i++)
+            {
+                var name = names[(i - 4) % names.Length];
+                string phoneNumber = $"2547{i:D7}";
+                modelBuilder.Entity<User>().HasData(new User
+                {
+                    UserId = i,
+                    Email = $"{name.ToLower()}{i}@company.co.ke",
+                    EmployeeNumber = $"EMP{i:D3}",
+                    FullName = $"{name} {i}",
+                    Role = "Employee",
+                    CreatedAt = DateTime.Now,
+                    PhoneNumber = phoneNumber
+                });
+            }
 
             modelBuilder.Entity<LeaveBalance>(entity =>
             {

@@ -32,42 +32,7 @@ namespace NexusEcom.DataAccess.Repositories
         }
 
 
-        public async Task<bool> RegisterUserAsync(UserDto userDto)
-        {
-            try
-            {
-                if (await IsEmailRegisteredAsync(userDto.Email))
-                {
-                    Console.WriteLine("Email is already registered.");
-                    return false;
-                }
-
-                var user = new User
-                {
-                    Email = userDto.Email,
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password),
-                    Role = userDto.Role,
-                    EmployeeNumber = userDto.EmployeeNumber ?? string.Empty,
-                    CreatedAt = DateTime.UtcNow,
-                    FullName = userDto.FullName,
-                    PhoneNumber = userDto.PhoneNumber
-                };
-
-                if (!await AddUserAsync(user))
-                {
-                    return false;
-                }
-                return true;
-
-            }
-            catch (Exception ex) 
-            {
-                Console.WriteLine($"not my codes fault: {ex.Message}");
-                return false;
-            }
-        }
-        
-
+       
         public async Task<bool> AddUserAsync(User user)
         {
             try
@@ -78,7 +43,7 @@ namespace NexusEcom.DataAccess.Repositories
             }
             catch (DbUpdateException ex)
             {
-                Console.WriteLine($"Database update error whicle creating user: {ex.Message}");
+                Console.WriteLine($"Database update error while creating user: {ex.Message}");
                 return false; // Operation failed
             }
             catch (Exception ex)
@@ -197,7 +162,8 @@ namespace NexusEcom.DataAccess.Repositories
         {
             try
             {
-                return await appDbContext.Users.ToListAsync();
+                var data = await appDbContext.Users.ToListAsync();
+                return data;
             }
             catch (Exception ex)
             {
@@ -283,6 +249,38 @@ namespace NexusEcom.DataAccess.Repositories
                 return false;
             }
         }
+    
+        public async Task<bool> RegisterUserIfUserExists(string employeeNo, string password)
+        {
+            try
+            {
+                var existingUser = await appDbContext.Users.FirstOrDefaultAsync(u => u.EmployeeNumber == employeeNo);
+
+                if (existingUser == null)
+                {
+                    Console.WriteLine($"User is not part of us!");
+                    return false;
+                }
+
+                existingUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
+
+                appDbContext.Users.Update(existingUser);
+                await appDbContext.SaveChangesAsync();
+                return true;
+
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine($"Database error during registration: {ex.Message}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error checking if email is registered: {ex.Message}");
+                return false;
+            }
+        }
+    
     }
 }
 
@@ -314,3 +312,40 @@ namespace NexusEcom.DataAccess.Repositories
 //    }
 
 //}
+
+
+//public async Task<bool> RegisterUserAsync(UserDto userDto)
+//{
+//    try
+//    {
+//        if (await IsEmailRegisteredAsync(userDto.Email))
+//        {
+//            Console.WriteLine("Email is already registered.");
+//            return false;
+//        }
+
+//        var user = new User
+//        {
+//            Email = userDto.Email,
+//            PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password),
+//            Role = userDto.Role,
+//            EmployeeNumber = userDto.EmployeeNumber ?? string.Empty,
+//            CreatedAt = DateTime.UtcNow,
+//            FullName = userDto.FullName,
+//            PhoneNumber = userDto.PhoneNumber
+//        };
+
+//        if (!await AddUserAsync(user))
+//        {
+//            return false;
+//        }
+//        return true;
+
+//    }
+//    catch (Exception ex) 
+//    {
+//        Console.WriteLine($"not my codes fault: {ex.Message}");
+//        return false;
+//    }
+//}
+
