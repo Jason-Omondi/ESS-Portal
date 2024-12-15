@@ -48,7 +48,9 @@ namespace NexusEcom.DataAccess.Repositories
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password),
                     Role = userDto.Role,
                     EmployeeNumber = userDto.EmployeeNumber ?? string.Empty,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    FullName = userDto.FullName,
+                    PhoneNumber = userDto.PhoneNumber
                 };
 
                 if (!await AddUserAsync(user))
@@ -100,7 +102,7 @@ namespace NexusEcom.DataAccess.Repositories
                 var existingUser = await appDbContext.Users.FindAsync(user.EmployeeNumber);
                 if (existingUser != null)
                 {
-                    Console.WriteLine($"User with ID {user.UserId} not found.");
+                    Console.WriteLine($"User with ID {user.Email} not found.");
                     return false;
                 }
 
@@ -123,7 +125,7 @@ namespace NexusEcom.DataAccess.Repositories
             }
             catch (DbUpdateException ex)
             {
-                Console.WriteLine($"Database update error while updating user ID {user.UserId}: {ex.Message}");
+                Console.WriteLine($"Database update error while updating user ID {user.EmployeeNumber}: {ex.Message}");
                 return false; // Operation failed
             }
             catch (Exception ex)
@@ -176,7 +178,7 @@ namespace NexusEcom.DataAccess.Repositories
                     Email = user.Email,
                     EmployeeNumber = user.EmployeeNumber,
                     Role = user.Role,
-                    UserId = user.UserId,
+                    //UserId = user.UserId,
                     FullName = user.FullName,
                     PhoneNumber = user.PhoneNumber,
                     //CreatedAt = user.CreatedAt

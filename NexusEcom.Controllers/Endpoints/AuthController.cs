@@ -24,11 +24,11 @@ namespace NexusEcom.Controllers.Endpoints
         [HttpPost]
         [Route("Login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(UserDto request)
+        public async Task<IActionResult> Login(string email, string password)
         {
             try
             {
-                if (request == null)
+                if (email == null )
                 {
                     Console.WriteLine($"bad request");
                     return BadRequest(new DefaultConfigs.DefaultResponse(
@@ -40,9 +40,9 @@ namespace NexusEcom.Controllers.Endpoints
                         ));
                 }
 
-                if (!await _authService.ValidateUserLoginAsync(request.Email, request.Password))
+                if (!await _authService.ValidateUserLoginAsync(email, password))
                 {
-                    Console.WriteLine($"Failed to validate login user: {request.Email}");
+                    Console.WriteLine($"Failed to validate login user: {email}");
                     return BadRequest(new DefaultConfigs.DefaultResponse(
                         DefaultConfigs.STATUS_FAIL,
                         DefaultConfigs.ERROR_MESSAGE,
@@ -51,8 +51,8 @@ namespace NexusEcom.Controllers.Endpoints
                         false
                         ));
                 }
-                var data = _authService.GetUserByEmail(request.Email);
-                var token = DefaultConfigs.GenerateToken(request.Email, request.Password);
+                var data = _authService.GetUserByEmail(email);
+                var token = DefaultConfigs.GenerateToken(email, password);
                 return Ok(
                     new DefaultConfigs.DefaultResponse(
                         DefaultConfigs.STATUS_SUCCESS,
@@ -67,7 +67,7 @@ namespace NexusEcom.Controllers.Endpoints
             }
             catch (Exception ex) 
             { 
-                Console.WriteLine($"Failed to login user {request.Email}", ex.ToString());
+                Console.WriteLine($"Failed to login user {email}", ex.ToString());
                 return BadRequest(new DefaultConfigs.DefaultResponse(
                     DefaultConfigs.STATUS_FAIL,
                     DefaultConfigs.ERROR_MESSAGE,

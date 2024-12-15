@@ -8,7 +8,7 @@ namespace NexusEcom.DataAccess.DataTransferObjects
 {
     public class UserDto
     {
-        public int UserId { get; set; }
+        //public int UserId { get; set; }
         public string Email { get; set; }
         public string EmployeeNumber { get; set; }
 
