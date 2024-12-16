@@ -26,7 +26,6 @@ namespace NexusEcom.Controllers.Endpoints
         [AllowAnonymous]
         public async Task<IActionResult> Login(string employeeNo, string password)
         {
-            //var email = employeeNo;
             try
             {
                 if (employeeNo == null )
@@ -54,7 +53,8 @@ namespace NexusEcom.Controllers.Endpoints
                 }
                 //var data = _authService.GetUserByEmail(email);
                 var data = _authService.GetByEmpNoAsync(employeeNo);
-                var token = DefaultConfigs.GenerateToken(employeeNo, password);
+                var email = data.Result!.Email;
+                var token = DefaultConfigs.GenerateToken(email, password);
                 return Ok(
                     new DefaultConfigs.DefaultResponse(
                         DefaultConfigs.STATUS_SUCCESS,
