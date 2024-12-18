@@ -1,4 +1,5 @@
-﻿using NexusEcom.Controllers.Services.Interfaces;
+﻿using AutoMapper;
+using NexusEcom.Controllers.Services.Interfaces;
 using NexusEcom.Data.DataTransferObjects;
 using NexusEcom.Data.Entities;
 using NexusEcom.Data.Repositories.Interfaces;
@@ -8,10 +9,13 @@ namespace NexusEcom.Controllers.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository) 
+
+        public UserService(IUserRepository userRepository, IMapper mapper) 
         {
             _userRepository = userRepository;
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task<bool> DeleteUserAsync(string employeeNumber)
@@ -27,15 +31,16 @@ namespace NexusEcom.Controllers.Services
             }
         }
 
-        public async Task<List<User>> GetAllUsersAsync()
+        public async Task<List<UserDto>> GetAllUsersAsync()
         {
             try
             {
-                return await _userRepository.GetAllUsersAsync();
+                var res = await _userRepository.GetAllUsersAsync();
+                return _mapper.Map<List<UserDto>>(res);
             }
             catch (Exception ex) 
             {
-                return new List<User>();
+                return new List<UserDto>();
             }
         
         }
@@ -106,11 +111,12 @@ namespace NexusEcom.Controllers.Services
             }
         }
 
-        public async Task<User?> GetUserByEmail(string email)
+        public async Task<UserDto?> GetUserByEmail(string email)
         {
             try
             {
-                return await _userRepository.GetByEmailAsync(email);
+                var result = await _userRepository.GetByEmailAsync(email);
+                return _mapper.Map<UserDto?>(result);
             }
             catch (Exception ex) 
             {
@@ -119,11 +125,13 @@ namespace NexusEcom.Controllers.Services
             }
         }
 
-        public async Task<User?> GetByEmpNoAsync(string empNo)
+        public async Task<UserDto?> GetByEmpNoAsync(string empNo)
         {
             try
             {
-                return await _userRepository.GetByEmpNoAsync(empNo);
+
+                var result = await _userRepository.GetByEmpNoAsync(empNo);
+                return _mapper.Map<UserDto>(result);
             }
             catch (Exception ex)
             {

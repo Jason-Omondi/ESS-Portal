@@ -24,11 +24,14 @@ namespace NexusEcom.Controllers.Endpoints
         [HttpPost]
         [Route("Login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(string employeeNo, string password)
+        public async Task<IActionResult> Login(UserDto request)
         {
+
+            var employeeNo = request.EmployeeNumber;
+            var password = request.Password;
             try
             {
-                if (employeeNo == null )
+                if (employeeNo == null)
                 {
                     Console.WriteLine($"bad request");
                     return BadRequest(new DefaultConfigs.DefaultResponse(

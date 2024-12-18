@@ -6,10 +6,10 @@ namespace NexusEcom.Controllers.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<User?> GetUserByEmail(string email);
+        Task<UserDto?> GetUserByEmail(string email);
 
         //Task AddUserAsync(UserDto user);
-        Task<List<User>> GetAllUsersAsync();
+        Task<List<UserDto>> GetAllUsersAsync();
 
         Task<bool> RegisterUserAsync(UserDto userDto);
         Task<bool> ValidateUserLoginAsync(string email, string password);
