@@ -112,11 +112,13 @@ namespace NexusEcom.Controllers.Endpoints
                 var userData = await _authService.GetByEmpNoAsync(employeeNo);
                 var email = userData!.Email;
                 var token = DefaultConfigs.GenerateToken(email, password);
-                var leaveApplication = await _leaveService.GetLeaveBalanceAsync(employeeNo);
+                var leaveBalance = await _leaveService.GetLeaveBalanceAsync(employeeNo);
+                var leaveAppliations = await _leaveService.GetLeaveRequestsByEmployeeIdAsync(employeeNo);
                 var finalData = new 
                 {
                     userData,
-                    leaveApplication,
+                    leaveBalance,
+                    leaveAppliations,
                 };
 
                 return Ok(
