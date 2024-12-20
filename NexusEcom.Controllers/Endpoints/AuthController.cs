@@ -4,6 +4,7 @@ using NexusEcom.Controllers.Services;
 using NexusEcom.Controllers.Services.Interfaces;
 using NexusEcom.Data.DataTransferObjects;
 using NexusEcom.Utils;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NexusEcom.Controllers.Endpoints
 {
@@ -14,75 +15,16 @@ namespace NexusEcom.Controllers.Endpoints
     {
         private readonly UserService _authService;
         private readonly IUserService _userService;
+        private readonly ILeaveService _leaveService;
 
-        public AuthController(UserService authService, IUserService userService)
+        public AuthController(UserService authService, IUserService userService, ILeaveService leaveService)
         {
             this._authService = authService;
             this._userService = userService;
+            this._leaveService = leaveService;
         }
 
-        [HttpPost]
-        [Route("Login")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login(UserDto request)
-        {
-
-            var employeeNo = request.EmployeeNumber;
-            var password = request.Password;
-            try
-            {
-                if (employeeNo == null)
-                {
-                    Console.WriteLine($"bad request");
-                    return BadRequest(new DefaultConfigs.DefaultResponse(
-                        DefaultConfigs.STATUS_ERROR,
-                        DefaultConfigs.ERROR_MESSAGE,
-                        null,
-                        null,
-                        false
-                        ));
-                }
-
-                if (!await _authService.ValidateUserLoginAsync(employeeNo, password))
-                {
-                    Console.WriteLine($"Failed to validate login user: {employeeNo}");
-                    return BadRequest(new DefaultConfigs.DefaultResponse(
-                        DefaultConfigs.STATUS_FAIL,
-                        DefaultConfigs.ERROR_MESSAGE,
-                        null,
-                        null,
-                        false
-                        ));
-                }
-                //var data = _authService.GetUserByEmail(email);
-                var data = _authService.GetByEmpNoAsync(employeeNo);
-                var email = data.Result!.Email;
-                var token = DefaultConfigs.GenerateToken(email, password);
-                return Ok(
-                    new DefaultConfigs.DefaultResponse(
-                        DefaultConfigs.STATUS_SUCCESS,
-                        "Request processed successfully",
-                        token,
-                        data.Result!,
-                        true
-                        )
-                    );
-
-
-            }
-            catch (Exception ex) 
-            { 
-                Console.WriteLine($"Failed to login user {employeeNo}", ex.ToString());
-                return BadRequest(new DefaultConfigs.DefaultResponse(
-                    DefaultConfigs.STATUS_FAIL,
-                    DefaultConfigs.ERROR_MESSAGE,
-                    ex.ToString(),
-                    null,
-                    false
-                    ));
-            }
-        }
-
+        
         [HttpPost("Register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register(UserDto request)
@@ -133,6 +75,73 @@ namespace NexusEcom.Controllers.Endpoints
             }
         }
 
+
+        [HttpPost("Login")]
+        [AllowAnonymous]
+        public  async Task<IActionResult> Login(UserDto request)
+        {
+            var employeeNo = request.EmployeeNumber;
+            var password = request.Password;
+
+            try
+            {
+                if (string.IsNullOrEmpty(employeeNo))
+                {
+                    Console.WriteLine($"bad request");
+                    return BadRequest(new DefaultConfigs.DefaultResponse(
+                        DefaultConfigs.STATUS_ERROR,
+                        DefaultConfigs.ERROR_MESSAGE,
+                        null,
+                        null,
+                        false
+                        ));
+                }
+
+                if (!await _authService.ValidateUserLoginAsync(employeeNo, password)) 
+                {
+                    Console.WriteLine($"bad credentials or user not found");
+                    return BadRequest(new DefaultConfigs.DefaultResponse(
+                        DefaultConfigs.STATUS_ERROR,
+                        DefaultConfigs.ERROR_MESSAGE,
+                        null,
+                        null,
+                        false
+                        ));
+                }
+
+                var userData = await _authService.GetByEmpNoAsync(employeeNo);
+                var email = userData!.Email;
+                var token = DefaultConfigs.GenerateToken(email, password);
+                var leaveApplication = await _leaveService.GetLeaveBalanceAsync(employeeNo);
+                var finalData = new 
+                {
+                    userData,
+                    leaveApplication,
+                };
+
+                return Ok(
+            new DefaultConfigs.DefaultResponse(
+                DefaultConfigs.STATUS_SUCCESS,
+                "Request processed successfully!",
+                token,
+                finalData!,
+                true
+                )
+            );
+
+
+            }
+            catch (Exception e) 
+            {
+               return StatusCode(500, new DefaultConfigs.DefaultResponse(
+                   DefaultConfigs.STATUS_FAIL,
+                   DefaultConfigs.ERROR_MESSAGE,
+                   e.Message,
+                   null,
+                   false
+               ));
+            }
+        }
 
         [HttpGet("GetAllUsers")]
         [AllowAnonymous]
@@ -259,130 +268,67 @@ namespace NexusEcom.Controllers.Endpoints
     }
 }
 
-//[HttpPost("Login")]
-//[AllowAnonymous]
-//public async Task<IActionResult> Login(LoginDto request)
-//{
-//    try
-//    {
-//        if (request == null)
-//        {
-//            return BadRequest(new DefaultConfigs.DefaultResponse(
-//                DefaultConfigs.STATUS_ERROR,
-//                "Request payload is missing.",
-//                null,
-//                null,
-//                false
-//            ));
-//        }
 
-//        var token = await _authService.LoginAsync(request);
+/*
+[HttpPost]
+[Route("Login")]
+[AllowAnonymous]
+public async Task<IActionResult> Login(UserDto request)
+{
 
-//        if (string.IsNullOrWhiteSpace(token))
-//        {
-//            return StatusCode(500, new DefaultConfigs.DefaultResponse(
-//                DefaultConfigs.STATUS_FAIL,
-//                DefaultConfigs.ERROR_MESSAGE,
-//                null,
-//                null,
-//                false
-//            ));
-//        }
+    var employeeNo = request.EmployeeNumber;
+    var password = request.Password;
+    try
+    {
+        if (employeeNo == null)
+        {
+            Console.WriteLine($"bad request");
+            return BadRequest(new DefaultConfigs.DefaultResponse(
+                DefaultConfigs.STATUS_ERROR,
+                DefaultConfigs.ERROR_MESSAGE,
+                null,
+                null,
+                false
+                ));
+        }
 
-//        return Ok(new DefaultConfigs.DefaultResponse(
-//            DefaultConfigs.STATUS_SUCCESS,
-//            "Login successful!",
-//            token,
-//            null,
-//            true
-//        ));
-//    }
-//    catch (ArgumentException ex)
-//    {
-//        return BadRequest(new DefaultConfigs.DefaultResponse(
-//            DefaultConfigs.STATUS_ERROR,
-//            ex.Message,
-//            null,
-//            null,
-//            false
-//        ));
-//    }
-//    catch (InvalidOperationException ex)
-//    {
-//        return Unauthorized(new DefaultConfigs.DefaultResponse(
-//            DefaultConfigs.STATUS_FAIL,
-//            ex.Message,
-//            null,
-//            null,
-//            false
-//        ));
-//    }
-//    catch (Exception ex)
-//    {
-//        return StatusCode(500, new DefaultConfigs.DefaultResponse(
-//            DefaultConfigs.STATUS_FAIL,
-//            "An unexpected error occurred.",
-//            ex.Message,
-//            null,
-//            false
-//        ));
-//    }
-//}
-
-//[HttpPost]
-//[AllowAnonymous]
-//[Route("Register")]
-//public async Task<IActionResult> Register(UserDto request)
-//{
-//    try
-//    {
-//        if (request == null)
-//        {
-//            return BadRequest(new DefaultConfigs.DefaultResponse(
-//                DefaultConfigs.STATUS_ERROR,
-//                "Invalid rewuest! Missing a payload?",
-//                null,
-//                null,
-//                false
-//            ));
-//        }
-
-//        var result = await _authService.Register(
-//            request
-//            );
-
-//        if (!result)
-//        {
-//            return StatusCode(500, new DefaultConfigs.DefaultResponse(
-//            DefaultConfigs.STATUS_FAIL,
-//            DefaultConfigs.ERROR_MESSAGE,
-//            null,
-//            null,
-//            false
-//            ));
-//        }
-
-//        return Ok(new DefaultConfigs.DefaultResponse(
-//            DefaultConfigs.STATUS_SUCCESS,
-//            "Request Processed Successfully!",
-//           null,
-//           null,
-//            res: true
-//            ));
+        if (!await _authService.ValidateUserLoginAsync(employeeNo, password))
+        {
+            Console.WriteLine($"Failed to validate login user: {employeeNo}");
+            return BadRequest(new DefaultConfigs.DefaultResponse(
+                DefaultConfigs.STATUS_FAIL,
+                DefaultConfigs.ERROR_MESSAGE,
+                null,
+                null,
+                false
+                ));
+        }
+        var data = _authService.GetByEmpNoAsync(employeeNo); //returns all user information
+        var email = data.Result!.Email;
+        var token = DefaultConfigs.GenerateToken(email, password);
+        var leaveData = _leaveService.GetLeaveBalanceAsync(employeeNo); // returns all users leave
+        return Ok(
+            new DefaultConfigs.DefaultResponse(
+                DefaultConfigs.STATUS_SUCCESS,
+                "Request processed successfully",
+                token,
+                data.Result!,
+                true
+                )
+            );
 
 
-//    }
-//    catch (Exception ex)
-
-//    {
-//        return StatusCode(500, new DefaultConfigs.DefaultResponse(
-//            DefaultConfigs.STATUS_FAIL,
-//            DefaultConfigs.ERROR_MESSAGE,
-//            ex.Message,
-//            null,
-//            false
-//            ));
-//    }
-
-//}
-
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Failed to login user {employeeNo}", ex.ToString());
+        return BadRequest(new DefaultConfigs.DefaultResponse(
+            DefaultConfigs.STATUS_FAIL,
+            DefaultConfigs.ERROR_MESSAGE,
+            ex.ToString(),
+            null,
+            false
+            ));
+    }
+}
+*/
