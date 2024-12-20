@@ -28,7 +28,7 @@ namespace NexusEcom.Data.Context
                 entity.Property(u => u.LastLogin).IsRequired(false);
             });
 
-            //seed simulation of 30 users ie role is employee
+            //seed simulation of 30 users
             modelBuilder.Entity<User>().HasData(
                 new User { UserId = 1, Email = "john.mutemi@example.com", EmployeeNumber = "EMP001", FullName = "John Mtemi", Role = "Employee", CreatedAt = DateTime.Now, PhoneNumber = "257769711031" },
                 new User { UserId = 2, Email = "jane.awiyo@example.com", EmployeeNumber = "EMP002", FullName = "Jane Awiyo", Role = "Employee", CreatedAt = DateTime.Now, PhoneNumber = "2547769711032" },
@@ -77,7 +77,7 @@ namespace NexusEcom.Data.Context
                 {
                     leaveBalanceId = leaveBalanceId,
                     EmployeeId = $"EMP{i:D3}",
-                    LeaveTypeId = leaveTypes[i % leaveTypes.Length], // Assuming 1 represents general leave type
+                    LeaveTypeId = leaveTypes[i % leaveTypes.Length],
                     TotalEntitlementDays = 21,
                     ConsumedDays = consumedDays,
                     CarriedForwardDays = carriedForwardDays,
@@ -105,14 +105,14 @@ namespace NexusEcom.Data.Context
             int leaveId = 1;
             for (int i = 1; i <= 30; i++)
             {
-                for (int j = 0; j < 2; j++) // Each employee gets 2 leave applications
+                for (int j = 0; j < 2; j++)
                 {
                     modelBuilder.Entity<Leave>().HasData(new Leave
                     {
                         LeaveId = leaveId,
                         EmployeeId = $"EMP{i:D3}",
-                        leaveBalanceId = i, // Assuming 1:1 relationship with LeaveBalance
-                        LeaveTypeId = new Random().Next(1, 4), // Random leave types
+                        leaveBalanceId = i, // 1:1 relationship with LeaveBalance
+                        LeaveTypeId = new Random().Next(1, 4), 
                         StartDate = DateTime.Now.AddDays(-10 * j),
                         EndDate = DateTime.Now.AddDays(-10 * j + 5),
                         TotalDays = 5,
