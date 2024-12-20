@@ -56,7 +56,7 @@ namespace NexusEcom.Data.Context
             modelBuilder.Entity<LeaveBalance>(entity =>
             {
                 entity.HasKey(lb => lb.leaveBalanceId);
-                entity.Property(lb => lb.EmployeeId).IsRequired();
+                entity.Property(lb => lb.EmployeeId).IsRequired(); //employeeNumber
                 entity.Property(lb => lb.LeaveTypeId).IsRequired();
                 entity.Property(lb => lb.TotalEntitlementDays).IsRequired();
                 entity.Property(lb => lb.RemainingDays).IsRequired();
@@ -64,6 +64,29 @@ namespace NexusEcom.Data.Context
                 entity.Property(lb => lb.CarriedForwardDays).IsRequired();
             });
 
+            int leaveBalanceId = 1;
+            var leaveTypes = new[] { 1, 2, 3 };
+            for (int i = 1; i <= 30; i++) 
+            {
+                int consumedDays = new Random().Next(0, 10);
+                int carriedForwardDays = new Random().Next(0, 5);
+                int remainingDays = 21 - consumedDays + carriedForwardDays;
+
+                modelBuilder.Entity<LeaveBalance>().HasData(new
+                LeaveBalance 
+                {
+                    leaveBalanceId = leaveBalanceId,
+                    EmployeeId = $"EMP{i:D3}",
+                    LeaveTypeId = leaveTypes[i % leaveTypes.Length], // Assuming 1 represents general leave type
+                    TotalEntitlementDays = 21,
+                    ConsumedDays = consumedDays,
+                    CarriedForwardDays = carriedForwardDays,
+                    RemainingDays = remainingDays
+                });
+                leaveBalanceId++;
+            }
+
+            // Leave Applications Seeding
             modelBuilder.Entity<Leave>(entity =>
             {
                 entity.HasKey(l => l.LeaveId);
@@ -74,11 +97,50 @@ namespace NexusEcom.Data.Context
                 entity.Property(l => l.Status).HasMaxLength(50).IsRequired();
 
                 entity.HasOne(l => l.LeaveBalance)
-          .WithMany(lb => lb.Leaves)
-          .HasForeignKey(l => l.leaveBalanceId)
-          .OnDelete(DeleteBehavior.Restrict); // Prevents cascading deletes
+                    .WithMany(lb => lb.Leaves)
+                    .HasForeignKey(l => l.leaveBalanceId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
+
+            int leaveId = 1;
+            for (int i = 1; i <= 30; i++)
+            {
+                for (int j = 0; j < 2; j++) // Each employee gets 2 leave applications
+                {
+                    modelBuilder.Entity<Leave>().HasData(new Leave
+                    {
+                        LeaveId = leaveId,
+                        EmployeeId = $"EMP{i:D3}",
+                        leaveBalanceId = i, // Assuming 1:1 relationship with LeaveBalance
+                        LeaveTypeId = new Random().Next(1, 4), // Random leave types
+                        StartDate = DateTime.Now.AddDays(-10 * j),
+                        EndDate = DateTime.Now.AddDays(-10 * j + 5),
+                        TotalDays = 5,
+                        Status = j % 2 == 0 ? "Pending" : "Approved",
+                        CreatedAt = DateTime.Now.AddDays(-10 * j),
+                        UpdatedAt = DateTime.Now.AddDays(-10 * j + 1)
+                    });
+                    leaveId++;
+                }
+            }
         }
     }
 }
 
+
+/*
+ modelBuilder.Entity<Leave>(entity =>
+            {
+                entity.HasKey(l => l.LeaveId);
+                entity.Property(l => l.EmployeeId).IsRequired(); //employeeNumber
+                entity.Property(l => l.LeaveTypeId).IsRequired();
+                entity.Property(l => l.StartDate).IsRequired();
+                entity.Property(l => l.EndDate).IsRequired();
+                entity.Property(l => l.Status).HasMaxLength(50).IsRequired();
+
+                entity.HasOne(l => l.LeaveBalance)
+          .WithMany(lb => lb.Leaves)
+          .HasForeignKey(l => l.leaveBalanceId)
+          .OnDelete(DeleteBehavior.Restrict); // Prevents cascading deletes
+            });
+ */
