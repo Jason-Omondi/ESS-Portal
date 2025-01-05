@@ -1,7 +1,7 @@
 # Leave Management System Architecture, Design and Development 
 
 ## Project Goal
-A comprehensive, scalable enterprise leave management platform demonstrating modern software architecture principles and best practices in .NET and cross-platform development.
+A comprehensive, scalable enterprise leave management platform with blazor wasm, dependency injection, design patterns, .NET Aspire, REST APIs approach in .NET Core.
 
 ## Key Architectural Features
 - **Clean Architecture** Implementation
